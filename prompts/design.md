@@ -1,4 +1,4 @@
-# Design — Panduan Desain untuk AI Coding Tools
+# design.md — Panduan Desain untuk AI Coding Tools
 
 > **INSTRUKSI UNTUK AI:** File ini adalah panduan desain wajib. Setiap kali membangun atau memodifikasi halaman web dalam project ini, **ikuti semua aturan di bawah tanpa pengecualian**. Jangan gunakan warna, radius, atau style yang tidak tercantum di sini.
 
@@ -295,12 +295,80 @@ Letter spacing: Heading → `tracking-tight` | Tombol/badge → `tracking-wide` 
   Batal
 </button>
 
-<!-- ICON ONLY -->
-<button class="p-2.5 rounded-full bg-gray-100 dark:bg-gray-700
-  hover:bg-gray-200 dark:hover:bg-gray-600 transition-all shadow-sm">
+<!-- ICON ONLY — ATURAN KRITIS CENTERING -->
+<!-- WAJIB: w-* h-* fixed dimension + flex items-center justify-center -->
+<!-- JANGAN gunakan p-* saja tanpa dimensi tetap untuk icon button -->
+<button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700
+  hover:bg-gray-200 dark:hover:bg-gray-600 transition-all shadow-sm
+  flex items-center justify-center shrink-0"
+  aria-label="Menu lainnya">
   <span class="material-symbols-rounded text-[20px] text-gray-600 dark:text-gray-300">more_vert</span>
 </button>
 ```
+
+> **⚠️ ATURAN ICON BUTTON CENTERING (WAJIB DIIKUTI):**
+> - Selalu gunakan **dimensi tetap** (`w-10 h-10`) + `flex items-center justify-center`
+> - **JANGAN** hanya menggunakan `p-2.5` tanpa `flex items-center justify-center`
+> - Tambahkan `shrink-0` agar tidak menyusut di dalam flex container
+> - Selalu tambah `aria-label` karena tidak ada teks
+
+#### Ukuran Icon Button
+
+| Size | Dimensi | Ikon | Digunakan untuk |
+|------|---------|------|-----------------|
+| **Large** | `w-12 h-12` | `text-[24px]` | Header action, FAB |
+| **Medium** (default) | `w-10 h-10` | `text-[20px]` | Toolbar, card action |
+| **Small** | `w-8 h-8` | `text-[18px]` | Tabel row action, compact |
+| **XSmall** | `w-7 h-7` | `text-[16px]` | Inline action, close badge |
+
+```html
+<!-- Icon button LARGE -->
+<button class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700
+  hover:bg-gray-200 dark:hover:bg-gray-600 transition-all shadow-sm
+  flex items-center justify-center shrink-0" aria-label="Notifikasi">
+  <span class="material-symbols-rounded text-[24px] text-gray-600 dark:text-gray-300">notifications</span>
+</button>
+
+<!-- Icon button SMALL (aksi tabel) -->
+<button class="w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700
+  transition-colors flex items-center justify-center shrink-0" aria-label="Edit">
+  <span class="material-symbols-rounded text-[18px] text-gray-500 dark:text-gray-400">edit</span>
+</button>
+
+<!-- Icon button PRIMARY (aksen warna) -->
+<button class="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20
+  hover:bg-primary/20 dark:hover:bg-primary/30 transition-all
+  flex items-center justify-center shrink-0" aria-label="Tambah">
+  <span class="material-symbols-rounded text-[20px] text-primary">add</span>
+</button>
+```
+
+> **Centering icon di dalam container lain (div, td, dll):**
+> ```html
+> <!-- Di dalam flex row -->
+> <div class="flex items-center gap-3">
+>   <button class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ...">
+>     <span class="material-symbols-rounded text-[20px]">icon</span>
+>   </button>
+>   <span>Teks di samping</span>
+> </div>
+>
+> <!-- Di dalam table cell -->
+> <td class="px-4 py-3">
+>   <div class="flex items-center justify-center gap-1">
+>     <button class="w-8 h-8 rounded-full flex items-center justify-center ...">
+>       <span class="material-symbols-rounded text-[18px]">edit</span>
+>     </button>
+>   </div>
+> </td>
+>
+> <!-- Centered di dalam card / empty state -->
+> <div class="flex items-center justify-center">
+>   <button class="w-10 h-10 rounded-full flex items-center justify-center ...">
+>     <span class="material-symbols-rounded text-[20px]">refresh</span>
+>   </button>
+> </div>
+> ```
 
 ### 9.2 Card
 
@@ -329,32 +397,445 @@ Hero/gradient card:
 
 ### 9.3 Form Elements
 
+#### 9.3.1 Input Text
+
 ```html
-<!-- INPUT / SELECT -->
-<input class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-600
+<input type="text" class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-600
   rounded-xl bg-gray-50 dark:bg-gray-700 text-text dark:text-white text-sm
   focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
-  transition-all placeholder:text-gray-400" />
+  transition-all placeholder:text-gray-400" placeholder="Masukkan teks..." />
+```
 
-<!-- LABEL -->
+#### 9.3.2 Label
+
+```html
 <label class="block text-sm font-medium text-text dark:text-gray-300 mb-2">
   Nama Field
 </label>
+```
 
-<!-- GRUP RADIO/CHECKBOX -->
-<div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-2xl
-  border border-gray-100 dark:border-gray-700 mb-5">
+#### 9.3.3 Textarea
+
+```html
+<textarea class="w-full px-4 py-3 border border-gray-200 dark:border-gray-600
+  rounded-xl bg-gray-50 dark:bg-gray-700 text-text dark:text-white text-sm
+  focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
+  transition-all placeholder:text-gray-400 resize-y min-h-[100px]"
+  placeholder="Tulis deskripsi..."></textarea>
+```
+
+#### 9.3.4 Select / Dropdown (Native — Styled)
+
+> **ATURAN:** Native `<select>` harus dibungkus dalam wrapper agar custom arrow icon bisa ditampilkan dan `appearance-none` menghilangkan panah bawaan browser.
+
+```html
+<div class="relative">
+  <select class="w-full px-4 py-2.5 pr-10 border border-gray-200 dark:border-gray-600
+    rounded-xl bg-gray-50 dark:bg-gray-700 text-text dark:text-white text-sm
+    focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
+    transition-all appearance-none cursor-pointer">
+    <option value="">Pilih opsi...</option>
+    <option value="1">Opsi Satu</option>
+    <option value="2">Opsi Dua</option>
+  </select>
+  <!-- Custom arrow icon — WAJIB ada -->
+  <span class="material-symbols-rounded text-[18px] text-gray-400
+    absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+    keyboard_arrow_down
+  </span>
 </div>
 ```
 
-Range slider thumb CSS:
+> **⚠️ ATURAN SELECT/DROPDOWN:**
+> - Selalu gunakan `appearance-none` untuk menghilangkan panah browser default
+> - Selalu bungkus dalam `div.relative` dengan icon panah `absolute right-3 top-1/2 -translate-y-1/2`
+> - Tambahkan `pr-10` pada `<select>` agar teks tidak tertimpa icon panah
+> - Icon panah HARUS `pointer-events-none` agar klik tetap diteruskan ke select
+
+#### 9.3.5 Custom Dropdown (JavaScript-based)
+
+> Gunakan ini ketika perlu dropdown dengan ikon, multi-line item, atau style yang tidak bisa dicapai native `<select>`.
+
+```html
+<div class="relative" id="customSelect">
+  <!-- Trigger button — MIRIP styling input -->
+  <button type="button" id="selectTrigger"
+    class="w-full px-4 py-2.5 pr-10 border border-gray-200 dark:border-gray-600
+    rounded-xl bg-gray-50 dark:bg-gray-700 text-text dark:text-white text-sm
+    focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
+    transition-all text-left flex items-center gap-3">
+    <span id="selectValue" class="flex-1 truncate">Pilih opsi...</span>
+    <span class="material-symbols-rounded text-[18px] text-gray-400
+      absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-200"
+      id="selectArrow">
+      keyboard_arrow_down
+    </span>
+  </button>
+
+  <!-- Dropdown panel -->
+  <div id="selectDropdown"
+    class="absolute left-0 right-0 mt-2 bg-white dark:bg-gray-800
+    border border-gray-100 dark:border-gray-700 rounded-2xl shadow-xl
+    py-2 z-50 opacity-0 invisible transition-all duration-150
+    origin-top scale-95 max-h-60 overflow-y-auto">
+
+    <!-- Item biasa -->
+    <button type="button" data-value="1"
+      class="select-option w-full text-left px-4 py-2.5 text-sm text-text dark:text-gray-300
+      hover:bg-[#f5f3ff] dark:hover:bg-gray-700 transition-colors
+      flex items-center gap-3">
+      <span class="material-symbols-rounded text-[18px] text-gray-400">folder</span>
+      Opsi Satu
+    </button>
+
+    <!-- Item aktif/terpilih -->
+    <button type="button" data-value="2"
+      class="select-option w-full text-left px-4 py-2.5 text-sm text-primary
+      bg-primary/5 dark:bg-primary/10 font-medium
+      flex items-center gap-3">
+      <span class="material-symbols-rounded text-[18px] text-primary">folder</span>
+      Opsi Dua (Terpilih)
+      <span class="material-symbols-rounded text-[16px] text-primary ml-auto">check</span>
+    </button>
+
+    <!-- Divider (opsional) -->
+    <div class="border-t border-gray-100 dark:border-gray-700 my-1"></div>
+
+    <!-- Item dengan deskripsi -->
+    <button type="button" data-value="3"
+      class="select-option w-full text-left px-4 py-2.5 text-sm text-text dark:text-gray-300
+      hover:bg-[#f5f3ff] dark:hover:bg-gray-700 transition-colors
+      flex items-center gap-3">
+      <span class="material-symbols-rounded text-[18px] text-gray-400">star</span>
+      <div class="flex-1">
+        <div>Opsi Tiga</div>
+        <div class="text-xs text-gray-400 mt-0.5">Deskripsi tambahan</div>
+      </div>
+    </button>
+  </div>
+</div>
+```
+
+**JavaScript untuk Custom Dropdown:**
+
+```javascript
+// Toggle dropdown
+const trigger = document.getElementById('selectTrigger');
+const dropdown = document.getElementById('selectDropdown');
+const arrow = document.getElementById('selectArrow');
+
+trigger.addEventListener('click', () => {
+  const isOpen = dropdown.classList.contains('opacity-100');
+  if (isOpen) {
+    dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+    dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+    arrow.style.transform = 'translateY(-50%) rotate(0deg)';
+  } else {
+    dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+    dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+    arrow.style.transform = 'translateY(-50%) rotate(180deg)';
+  }
+});
+
+// Tutup saat klik di luar
+document.addEventListener('click', (e) => {
+  if (!document.getElementById('customSelect').contains(e.target)) {
+    dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+    dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+    arrow.style.transform = 'translateY(-50%) rotate(0deg)';
+  }
+});
+```
+
+#### 9.3.6 Custom Radio Button
+
+> **ATURAN:** Sembunyikan native radio, gunakan `<label>` sebagai target klik dengan styled dot.
+
+```html
+<div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-2xl
+  border border-gray-100 dark:border-gray-700 space-y-2">
+
+  <!-- Radio item -->
+  <label class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer
+    hover:bg-white dark:hover:bg-gray-700 transition-colors group">
+    <input type="radio" name="pilihan" value="a" class="sr-only peer" />
+    <!-- Custom radio circle -->
+    <span class="w-5 h-5 rounded-full border-2 border-gray-300 dark:border-gray-500
+      flex items-center justify-center shrink-0 transition-all duration-200
+      peer-checked:border-primary peer-checked:bg-primary
+      group-hover:border-gray-400 dark:group-hover:border-gray-400">
+      <!-- Inner dot (muncul saat checked via CSS) -->
+      <span class="w-2 h-2 rounded-full bg-white scale-0 transition-transform duration-200
+        peer-checked:scale-100"></span>
+    </span>
+    <span class="text-sm text-text dark:text-gray-300 peer-checked:text-text
+      dark:peer-checked:text-white peer-checked:font-medium">
+      Opsi A
+    </span>
+  </label>
+
+  <!-- Radio item lainnya (salin pattern di atas) -->
+  <label class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer
+    hover:bg-white dark:hover:bg-gray-700 transition-colors group">
+    <input type="radio" name="pilihan" value="b" class="sr-only peer" />
+    <span class="w-5 h-5 rounded-full border-2 border-gray-300 dark:border-gray-500
+      flex items-center justify-center shrink-0 transition-all duration-200
+      peer-checked:border-primary peer-checked:bg-primary
+      group-hover:border-gray-400 dark:group-hover:border-gray-400">
+      <span class="w-2 h-2 rounded-full bg-white scale-0 transition-transform duration-200
+        peer-checked:scale-100"></span>
+    </span>
+    <span class="text-sm text-text dark:text-gray-300 peer-checked:text-text
+      dark:peer-checked:text-white peer-checked:font-medium">
+      Opsi B
+    </span>
+  </label>
+</div>
+```
+
+**CSS Wajib untuk Custom Radio:**
+
 ```css
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none;
-  width: 18px; height: 18px; border-radius: 50%;
-  background: #6246ea; cursor: pointer;
+/* Inner dot muncul saat radio checked */
+input[type="radio"]:checked + span > span {
+  transform: scale(1);
 }
-input[type="range"]::-webkit-slider-thumb:hover { background: #4d37b8; }
+input[type="radio"]:checked + span {
+  border-color: #6246ea;
+  background-color: #6246ea;
+}
+/* Label text bold saat checked */
+input[type="radio"]:checked ~ span:last-child {
+  font-weight: 500;
+  color: #2b2c34;
+}
+.dark input[type="radio"]:checked ~ span:last-child {
+  color: #ffffff;
+}
+/* Focus visible ring */
+input[type="radio"]:focus-visible + span {
+  box-shadow: 0 0 0 3px rgba(98, 70, 234, 0.3);
+}
+```
+
+#### 9.3.7 Custom Checkbox
+
+```html
+<label class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer
+  hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
+  <input type="checkbox" class="sr-only peer" />
+  <!-- Custom checkbox box -->
+  <span class="w-5 h-5 rounded-md border-2 border-gray-300 dark:border-gray-500
+    flex items-center justify-center shrink-0 transition-all duration-200
+    peer-checked:border-primary peer-checked:bg-primary
+    group-hover:border-gray-400 dark:group-hover:border-gray-400">
+    <span class="material-symbols-rounded text-[14px] text-white scale-0
+      transition-transform duration-200">check</span>
+  </span>
+  <span class="text-sm text-text dark:text-gray-300">Label checkbox</span>
+</label>
+```
+
+**CSS Wajib untuk Custom Checkbox:**
+
+```css
+input[type="checkbox"]:checked + span {
+  border-color: #6246ea;
+  background-color: #6246ea;
+}
+input[type="checkbox"]:checked + span > span {
+  transform: scale(1);
+}
+input[type="checkbox"]:focus-visible + span {
+  box-shadow: 0 0 0 3px rgba(98, 70, 234, 0.3);
+}
+```
+
+#### 9.3.8 Toggle Switch
+
+> **ATURAN:** Toggle switch = `<label>` + hidden checkbox + styled track/thumb. Gunakan untuk on/off settings.
+
+```html
+<label class="flex items-center gap-3 cursor-pointer group">
+  <input type="checkbox" class="sr-only peer" />
+  <!-- Toggle track -->
+  <span class="relative w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full
+    transition-colors duration-200 peer-checked:bg-primary shrink-0">
+    <!-- Toggle thumb -->
+    <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md
+      transition-transform duration-200 peer-checked:translate-x-5"></span>
+  </span>
+  <span class="text-sm text-text dark:text-gray-300">Label toggle</span>
+</label>
+```
+
+**CSS Wajib untuk Toggle Switch:**
+
+```css
+/* Track aktif */
+input[type="checkbox"]:checked + span {
+  background-color: #6246ea;
+}
+/* Thumb geser ke kanan */
+input[type="checkbox"]:checked + span > span {
+  transform: translateX(1.25rem); /* 20px = w-5 */
+}
+/* Focus ring */
+input[type="checkbox"]:focus-visible + span {
+  box-shadow: 0 0 0 3px rgba(98, 70, 234, 0.3);
+}
+```
+
+> **Tips:** Untuk toggle yang BERBEDA dari checkbox biasa, gunakan class `.toggle-switch` pada label agar CSS tidak konflik:
+> ```css
+> .toggle-switch input:checked + span { background-color: #6246ea; }
+> .toggle-switch input:checked + span > span { transform: translateX(1.25rem); }
+> ```
+
+#### 9.3.9 Range Slider (Custom)
+
+```html
+<div class="space-y-2">
+  <div class="flex items-center justify-between">
+    <label class="text-sm font-medium text-text dark:text-gray-300">Volume</label>
+    <span class="text-sm font-semibold text-primary" id="rangeValue">50</span>
+  </div>
+  <input type="range" min="0" max="100" value="50"
+    class="custom-range w-full h-2 rounded-full appearance-none cursor-pointer
+    bg-gray-200 dark:bg-gray-700" />
+</div>
+```
+
+**CSS Wajib untuk Range Slider (Salin ke stylesheet):**
+
+```css
+/* === RANGE SLIDER CUSTOM === */
+/* Track */
+.custom-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 9999px;
+  outline: none;
+}
+
+/* Webkit (Chrome, Safari, Edge) — Thumb */
+.custom-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #6246ea;
+  cursor: pointer;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(98, 70, 234, 0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.custom-range::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 10px rgba(98, 70, 234, 0.5);
+}
+.custom-range::-webkit-slider-thumb:active {
+  transform: scale(0.95);
+}
+
+/* Firefox — Thumb */
+.custom-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #6246ea;
+  cursor: pointer;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(98, 70, 234, 0.3);
+}
+.custom-range::-moz-range-track {
+  height: 8px;
+  border-radius: 9999px;
+  background: #e5e7eb;
+}
+
+/* Dark mode */
+.dark .custom-range {
+  background: #374151;
+}
+.dark .custom-range::-webkit-slider-thumb {
+  border-color: #1f2937;
+}
+.dark .custom-range::-moz-range-track {
+  background: #374151;
+}
+.dark .custom-range::-moz-range-thumb {
+  border-color: #1f2937;
+}
+
+/* Focus visible */
+.custom-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(98, 70, 234, 0.4);
+}
+```
+
+#### 9.3.10 Search Input
+
+```html
+<div class="relative">
+  <span class="material-symbols-rounded text-[20px] text-gray-400
+    absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">search</span>
+  <input type="search" placeholder="Cari..."
+    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-600
+    rounded-xl bg-gray-50 dark:bg-gray-700 text-text dark:text-white text-sm
+    focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
+    transition-all placeholder:text-gray-400" />
+</div>
+```
+
+#### 9.3.11 Input dengan Icon (Pattern Umum)
+
+> **Pattern** untuk menempatkan icon di dalam input: bungkus `div.relative`, icon `absolute + pointer-events-none`, input padding kiri/kanan tambahan.
+
+```html
+<!-- Icon di kiri -->
+<div class="relative">
+  <span class="material-symbols-rounded text-[20px] text-gray-400
+    absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">icon_name</span>
+  <input class="w-full pl-10 pr-4 py-2.5 ... rounded-xl ..." />
+</div>
+
+<!-- Icon di kanan -->
+<div class="relative">
+  <input class="w-full pl-4 pr-10 py-2.5 ... rounded-xl ..." />
+  <span class="material-symbols-rounded text-[20px] text-gray-400
+    absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">icon_name</span>
+</div>
+
+<!-- Icon kanan yang clickable (misal: toggle password visibility) -->
+<div class="relative">
+  <input type="password" class="w-full pl-4 pr-10 py-2.5 ... rounded-xl ..." />
+  <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2
+    w-8 h-8 rounded-full flex items-center justify-center
+    hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+    <span class="material-symbols-rounded text-[18px] text-gray-400">visibility</span>
+  </button>
+</div>
+```
+
+#### 9.3.12 Form Group / Container
+
+```html
+<!-- Grup field dalam card-like container -->
+<div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-2xl
+  border border-gray-100 dark:border-gray-700 space-y-4">
+  <!-- field items di sini -->
+</div>
+
+<!-- Inline form (label + input horizontal) -->
+<div class="flex items-center gap-4">
+  <label class="text-sm font-medium text-text dark:text-gray-300 whitespace-nowrap shrink-0">
+    Label
+  </label>
+  <input class="flex-1 px-4 py-2.5 ... rounded-xl ..." />
+</div>
 ```
 
 ### 9.4 Header
@@ -1161,10 +1642,204 @@ Padding konten   : px-6 md:px-8 py-4
 9. **Micro-interaction** — Semua tombol punya `active:scale-95` / `active:scale-[0.98]`
 10. **Konten lega** — Padding konsisten, gap teratur, tidak sesak
 11. **Accessible by default** — Focus ring, aria-label, keyboard navigable
+12. **Icon centering = fixed dimension** — Icon button SELALU `w-N h-N` + `flex items-center justify-center shrink-0`; JANGAN hanya `p-*`
+13. **Native form = custom skin** — Sembunyikan native radio/checkbox/select dengan `sr-only` atau `appearance-none`, ganti visual dengan styled span
 
 ---
 
-## 18. Checklist Konsistensi (Verifikasi Sebelum Selesai)
+## 18. Komponen Tambahan
+
+### 18.1 Avatar
+
+```html
+<!-- Avatar dengan gambar -->
+<div class="w-10 h-10 rounded-full overflow-hidden shrink-0">
+  <img src="avatar.jpg" alt="Nama" class="w-full h-full object-cover" />
+</div>
+
+<!-- Avatar dengan inisial -->
+<div class="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20
+  flex items-center justify-center shrink-0">
+  <span class="text-sm font-semibold text-primary">AB</span>
+</div>
+
+<!-- Avatar dengan icon -->
+<div class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700
+  flex items-center justify-center shrink-0">
+  <span class="material-symbols-rounded text-[20px] text-gray-400">person</span>
+</div>
+```
+
+| Size | Dimensi | Digunakan untuk |
+|------|---------|-----------------|
+| **Small** | `w-8 h-8` | Inline, list item |
+| **Medium** | `w-10 h-10` | Header, card |
+| **Large** | `w-14 h-14` | Profile detail |
+| **XLarge** | `w-20 h-20` | Profile page hero |
+
+### 18.2 Chip / Tag
+
+```html
+<!-- Chip default (removable) -->
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full
+  bg-[#EBEBFA] dark:bg-gray-700 text-sm font-medium text-primary dark:text-[#b4a4f4]">
+  Label
+  <button class="w-4 h-4 rounded-full hover:bg-primary/20 transition-colors
+    flex items-center justify-center shrink-0" aria-label="Hapus tag">
+    <span class="material-symbols-rounded text-[14px]">close</span>
+  </button>
+</span>
+
+<!-- Chip status -->
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full
+  bg-success/15 text-sm font-medium text-[#058a4e] dark:text-success">
+  <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+  Aktif
+</span>
+```
+
+### 18.3 Alert / Banner
+
+```html
+<!-- Info alert -->
+<div class="flex items-start gap-3 px-4 py-3.5 rounded-2xl
+  bg-primary/5 dark:bg-primary/10 border border-primary/20
+  text-sm text-text dark:text-gray-300">
+  <span class="material-symbols-rounded text-[20px] text-primary shrink-0 mt-0.5">info</span>
+  <div class="flex-1">
+    <p class="font-medium text-text dark:text-white mb-0.5">Judul Info</p>
+    <p class="text-gray-500 dark:text-gray-400">Pesan informasi detail.</p>
+  </div>
+  <button class="w-8 h-8 rounded-full hover:bg-primary/10 transition-colors
+    flex items-center justify-center shrink-0" aria-label="Tutup">
+    <span class="material-symbols-rounded text-[18px] text-gray-400">close</span>
+  </button>
+</div>
+
+<!-- Warning alert -->
+<div class="flex items-start gap-3 px-4 py-3.5 rounded-2xl
+  bg-warning/5 dark:bg-warning/10 border border-warning/20
+  text-sm text-text dark:text-gray-300">
+  <span class="material-symbols-rounded text-[20px] text-warning shrink-0 mt-0.5">warning</span>
+  <div class="flex-1">Pesan peringatan.</div>
+</div>
+
+<!-- Danger alert -->
+<div class="flex items-start gap-3 px-4 py-3.5 rounded-2xl
+  bg-danger/5 dark:bg-danger/10 border border-danger/20
+  text-sm text-text dark:text-gray-300">
+  <span class="material-symbols-rounded text-[20px] text-danger shrink-0 mt-0.5">error</span>
+  <div class="flex-1">Pesan error.</div>
+</div>
+```
+
+### 18.4 Accordion / Collapsible
+
+```html
+<div class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700
+  rounded-2xl overflow-hidden divide-y divide-gray-100 dark:divide-gray-700">
+
+  <!-- Accordion item -->
+  <details class="group">
+    <summary class="flex items-center justify-between px-5 py-4 cursor-pointer
+      hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors
+      text-sm font-medium text-text dark:text-white list-none">
+      <span class="flex items-center gap-3">
+        <span class="material-symbols-rounded text-[20px] text-gray-400">help</span>
+        Pertanyaan Accordion
+      </span>
+      <span class="material-symbols-rounded text-[20px] text-gray-400
+        transition-transform duration-200 group-open:rotate-180">
+        keyboard_arrow_down
+      </span>
+    </summary>
+    <div class="px-5 pb-4 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+      Jawaban atau konten accordion.
+    </div>
+  </details>
+</div>
+```
+
+### 18.5 Breadcrumb
+
+```html
+<nav class="flex items-center gap-1.5 text-sm" aria-label="Breadcrumb">
+  <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-primary transition-colors">
+    Home
+  </a>
+  <span class="material-symbols-rounded text-[16px] text-gray-300 dark:text-gray-600">
+    chevron_right
+  </span>
+  <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-primary transition-colors">
+    Kategori
+  </a>
+  <span class="material-symbols-rounded text-[16px] text-gray-300 dark:text-gray-600">
+    chevron_right
+  </span>
+  <span class="text-text dark:text-white font-medium">Halaman Saat Ini</span>
+</nav>
+```
+
+### 18.6 File Upload Area
+
+```html
+<label class="flex flex-col items-center justify-center w-full py-12 px-6
+  border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl
+  bg-gray-50 dark:bg-gray-700/30 cursor-pointer
+  hover:border-primary hover:bg-primary/5 dark:hover:bg-primary/10
+  transition-all duration-200 group">
+  <input type="file" class="sr-only" />
+  <div class="w-14 h-14 rounded-full bg-primary/10 dark:bg-primary/20
+    flex items-center justify-center mb-4
+    group-hover:scale-110 transition-transform duration-200">
+    <span class="material-symbols-rounded text-[28px] text-primary">cloud_upload</span>
+  </div>
+  <p class="text-sm font-medium text-text dark:text-white mb-1">
+    Klik untuk upload atau drag & drop
+  </p>
+  <p class="text-xs text-gray-400">PNG, JPG, PDF (maks. 10MB)</p>
+</label>
+```
+
+### 18.7 Stepper / Steps
+
+```html
+<div class="flex items-center gap-2">
+  <!-- Step selesai -->
+  <div class="flex items-center gap-2">
+    <div class="w-8 h-8 rounded-full bg-primary text-white text-sm font-semibold
+      flex items-center justify-center shrink-0">
+      <span class="material-symbols-rounded text-[16px]">check</span>
+    </div>
+    <span class="text-sm font-medium text-text dark:text-white hidden sm:inline">Langkah 1</span>
+  </div>
+  <!-- Garis penghubung -->
+  <div class="flex-1 h-0.5 bg-primary rounded-full"></div>
+  <!-- Step aktif -->
+  <div class="flex items-center gap-2">
+    <div class="w-8 h-8 rounded-full bg-primary text-white text-sm font-semibold
+      flex items-center justify-center shrink-0 ring-4 ring-primary/20">
+      2
+    </div>
+    <span class="text-sm font-semibold text-primary hidden sm:inline">Langkah 2</span>
+  </div>
+  <!-- Garis belum -->
+  <div class="flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+  <!-- Step belum -->
+  <div class="flex items-center gap-2">
+    <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700
+      text-gray-400 text-sm font-medium
+      flex items-center justify-center shrink-0">
+      3
+    </div>
+    <span class="text-sm text-gray-400 hidden sm:inline">Langkah 3</span>
+  </div>
+</div>
+```
+
+---
+
+## 19. Checklist Konsistensi (Verifikasi Sebelum Selesai)
 
 ### Visual & Layout
 - [ ] Semua tombol → `rounded-full`
@@ -1187,6 +1862,21 @@ Padding konten   : px-6 md:px-8 py-4
 - [ ] `font-variation-settings` default: `'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24`
 - [ ] State aktif nav → `FILL=1` via `.icon-filled`
 
+### Icon Button Centering
+- [ ] Icon-only button menggunakan dimensi tetap (`w-10 h-10`, bukan hanya `p-2.5`)
+- [ ] Icon button memiliki `flex items-center justify-center shrink-0`
+- [ ] Icon button di dalam flex/table row tetap centered
+- [ ] Tidak ada icon button yang hanya mengandalkan padding untuk sizing
+
+### Form Elements
+- [ ] Native `<select>` → `appearance-none` + custom arrow icon dalam wrapper `div.relative`
+- [ ] Radio button → native hidden (`sr-only`), custom styled circle + CSS checked state
+- [ ] Checkbox → native hidden (`sr-only`), custom styled box + CSS checked state
+- [ ] Toggle switch → hidden checkbox + track/thumb spans + CSS transitions
+- [ ] Range slider → `appearance-none` + custom thumb/track CSS (Webkit + Firefox)
+- [ ] Search input → icon `absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none`
+- [ ] Input dengan icon → `div.relative` wrapper pattern
+
 ### Interaksi & Keamanan
 - [ ] Toast via JS dengan `textContent` (bukan `innerHTML`)
 - [ ] Tidak ada `onclick` inline — gunakan `addEventListener`
@@ -1200,6 +1890,7 @@ Padding konten   : px-6 md:px-8 py-4
 - [ ] Empty state tersedia untuk halaman tanpa data
 - [ ] Sidebar nav ada active state (tint ungu + border-left)
 - [ ] Bottom nav mobile tersedia jika ada sidebar desktop
+- [ ] Custom dropdown tutup saat klik di luar
 
 ### Accessibility
 - [ ] Semua icon-only buttons punya `aria-label`
@@ -1207,8 +1898,9 @@ Padding konten   : px-6 md:px-8 py-4
 - [ ] Modal: `aria-modal="true"`, focus trapped
 - [ ] Toast: `role="alert"`
 - [ ] Kontras warna ≥ 4.5:1 (WCAG AA)
+- [ ] Radio/checkbox/toggle dapat dioperasikan via keyboard (Space/Enter)
+- [ ] File upload area memiliki `<input type="file" class="sr-only">`
 
 ---
-
 
 *Design adalah bagian dari ekosistem **Kelana Code** — agentic coding tool yang dirancang untuk membantu developer Indonesia membangun produk yang lebih baik dan lebih cepat*
